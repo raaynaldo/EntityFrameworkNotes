@@ -255,3 +255,27 @@ protected override void OnModelCreating(DbModelBuilder modelBuilder)
     modelBuilder.Configuration.Add(new CourseConfiguration());
 }
 ```
+
+## Eager Loading
+
+```c#
+// For single properties
+context.Courses.Include(c=>c.Author.Address);
+
+// For collection properties
+context.Courses.Include(a=>a.Tags.Select(t=>t.Moderator));
+```
+
+## Explicit Loading
+
+```c#
+var author = context.Authors.Single(a => a.Id == 1);
+
+context.Courses.Where(c => c.AuthorId == author.Id &&
+c.FullPrice == 0)// We can apply filter
+.Load(); // Load for Explicit Loading
+
+var authorIds = context.Authors.Select(a=> a.Id);
+
+context.Courses.Where(c => authorsIds.Contains(c.AuthorId) && c.FullPrice == 0).Load();
+```
