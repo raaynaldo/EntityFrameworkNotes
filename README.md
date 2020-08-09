@@ -279,3 +279,82 @@ var authorIds = context.Authors.Select(a=> a.Id);
 
 context.Courses.Where(c => authorsIds.Contains(c.AuthorId) && c.FullPrice == 0).Load();
 ```
+
+## Adding Objects
+
+- Using an existing object in context
+
+  ```c#
+  var context = new PlutoContext();
+
+  var author = context.Authors.Single(a => a.Id == 1);
+  var course =  new Course
+  {
+      Name = "New Course",
+      Description = "New Description",
+      FullPrice = 19.95f,
+      Level = 1,
+      Author = author // using existing object
+  }
+  context.Courses.Add(course);
+
+  context.SaveChanges()
+  ```
+
+- Using foreign key properties
+
+  ```c#
+  var context = new PlutoContext();
+
+  var course =  new Course
+  {
+      Name = "New Course",
+      Description = "New Description",
+      FullPrice = 19.95f,
+      Level = 1,
+      AuthorId = 1 // using foreign key
+  }
+  context.Courses.Add(course);
+
+  context.SaveChanges()
+  ```
+
+## Updating Objects
+
+```c#
+var context = new PlutoContext();
+
+var course = context.Courses.Find(4);
+couse.Name = "New Name";
+couse.AuthorId = 2;
+
+context.SaveChanges();
+
+```
+
+### Removing Objects
+
+- With Cascade Delete
+
+  ```c#
+  var context = new PlutoContext();
+
+  var course = context.Courses.Find(6);
+  context.Courses.Remove(course);
+
+  context.SaveChanges();
+
+  ```
+
+- Without Cascade Delete
+
+  ```c#
+  var context = new PlutoContext();
+
+  var author = context.Authors.Inculde(a => a.Courses).Find(2);
+  context.Courses.RemoveRange(author.Courses);
+  context.Courses.Remove(author);
+
+  context.SaveChanges();
+
+  ```
